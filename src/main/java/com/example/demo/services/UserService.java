@@ -10,7 +10,7 @@ import com.example.demo.model.UserModel;
 
 @Service
 public class UserService {
-    private  UserRepository userRepository;
+    private static  UserRepository userRepository;
 
     @Autowired
     public UserService(UserRepository userRepository){

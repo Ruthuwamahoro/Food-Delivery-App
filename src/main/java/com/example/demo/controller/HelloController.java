@@ -17,20 +17,24 @@ import com.example.demo.utils.SendResponse;
 @RequestMapping("/api/users")
 public class HelloController {
 
+    private UserService userService;
+
     @GetMapping
     public String hello(){
         return "welcome to food delivery app";
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SendResponse<UserModel>> userData(@PathVariable String id){
-        Optional<UserModel> AllUserInfo = UserService.getUserById(id);
-        if(AllUserInfo == null ||AllUserInfo.isEmpty()){
-            SendResponse<UserModel> responseData = new SendResponse<>("success", "Not Found", null);
-
+    public ResponseEntity<SendResponse<UserModel>> userData(@PathVariable String id) {
+        Optional<UserModel> allUserInfo = userService.getUserById(id); // ✅ lowercase
+    
+        if (allUserInfo == null || allUserInfo.isEmpty()) {
+            SendResponse<UserModel> responseData = new SendResponse<>("error", "User Not Found", null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
         }
-        SendResponse<UserModel> response = new SendResponse<>("success", "User returned successfully", AllUserInfo.get());
+        
+    
+        SendResponse<UserModel> response = new SendResponse<>("success", "User returned successfully", allUserInfo.get());
         return ResponseEntity.ok(response);
     }
 

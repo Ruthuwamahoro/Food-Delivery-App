@@ -1,8 +1,6 @@
 package com.example.demo.controller;
 
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -18,7 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
-    private static final Logger logger = LoggerFactory.getLogger(OAuth2LoginSuccessHandler.class);
+    // private static final Logger logger = LoggerFactory.getLogger(OAuth2LoginSuccessHandler.class);
 
 
 
@@ -30,17 +28,21 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
         OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
         String email = oauthUser.getAttribute("name");
         String fullName = oauthUser.getAttribute("name");
+        String picture = oauthUser.getAttribute("picture");
         UserModel user = new UserModel();
+        user.generateId();
         user.setFullName(fullName);
         user.setEmail(email);
-        userService.registerUser(user);
+        UserModel savedUser = userService.registerUser(user);
 
-        logger.info("Google OAuth2 attributes: {}", oauthUser.getAttributes());
-        logger.info("Full Name: {}", fullName);
-        logger.info("Email: {}", email);
+        System.out.println("========== Google OAuth2 Login ==========");
+        System.out.println("All Attributes : " + oauthUser.getAttributes());
+        System.out.println("Full Name      : " + fullName);
+        System.out.println("Email          : " + email);
+        System.out.println("Picture        : " + picture);
+        System.out.println("Saved User     : " + savedUser);
+        System.out.println("=========================================: " + savedUser.getId());
 
-        response.sendRedirect("/api/users/{id}");
-        System.out.println("this is the registered user====================" + user);
     }
 
     
