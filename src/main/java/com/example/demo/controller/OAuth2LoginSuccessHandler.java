@@ -34,13 +34,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
         user.setFullName(fullName);
         user.setEmail(email);
         UserModel savedUser = userService.registerUser(user);
-
-        System.out.println("========== Google OAuth2 Login ==========");
-        System.out.println("All Attributes : " + oauthUser.getAttributes());
-        System.out.println("Full Name      : " + fullName);
-        System.out.println("Email          : " + email);
-        System.out.println("Picture        : " + picture);
-        System.out.println("Saved User     : " + savedUser);
         System.out.println("=========================================: " + savedUser.getId());
 
     }
