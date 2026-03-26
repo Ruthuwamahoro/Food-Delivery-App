@@ -67,46 +67,4 @@ public class FoodService {
         }
         return null;
     }
-
-    // // Get Food by pagination
-    // public Page<FoodModel> getFoodByPagination(int page, int size, String sortBy){
-    //     Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-    //     Page<FoodModel> foodPage = foodRepository.findAll(pageable);
-    //     return foodPage;
-    // }
-
-    // // Search Food by name 
-    // public FoodModel searchFoodByName(String name){
-    //     List<FoodModel> foods = foodRepository.findByNameContainingIgnoreCase(name);
-    //     if(foods.isEmpty()){
-    //         return null;
-    //     }
-    //     return foods.get(0);
-    // }
-
-    // // search Food by price
-    // public List<FoodModel> searchFoodByPrice(String price){
-    //     List<FoodModel> foods = foodRepository.findByPrice(price);
-    //     if(foods.isEmpty()){
-    //         return null;
-    //     }
-    //     return foods;
-    // }
-
-    // // search Food by description
-    // public List<FoodModel> searchFoodByDescription(String description){
-    //     List<FoodModel> foods = foodRepository.findByDescriptionContaining(description);
-    //     if(foods.isEmpty()){
-    //         return null;
-    //     }
-    //     return foods;
-    // }
-
-    // // search Food by name with pagination
-    // public Page<FoodModel> searchFoodByNameWithPagination(String name, int page, int size, String sortBy){
-    //     Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-    //     Page<FoodModel> foodPage = foodRepository.findByNameContaining(name, pageable);
-    //     return foodPage;
-    // }
-    
 }
