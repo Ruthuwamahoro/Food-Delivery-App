@@ -26,13 +26,13 @@ public class HelloController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SendResponse<UserModel>> userData(@PathVariable String id) {
-        Optional<UserModel> allUserInfo = userService.getUserById(id); // ✅ lowercase
+        Optional<UserModel> allUserInfo = userService.getUserById(id); 
     
         if (allUserInfo == null || allUserInfo.isEmpty()) {
             SendResponse<UserModel> responseData = new SendResponse<>("error", "User Not Found", null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
         }
-        
+
     
         SendResponse<UserModel> response = new SendResponse<>("success", "User returned successfully", allUserInfo.get());
         return ResponseEntity.ok(response);

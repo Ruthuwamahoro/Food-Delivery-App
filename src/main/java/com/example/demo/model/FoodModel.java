@@ -11,8 +11,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 
-// creating a food model class
-
 @NoArgsConstructor
 @Document(collection = "foods")
 @Setter
