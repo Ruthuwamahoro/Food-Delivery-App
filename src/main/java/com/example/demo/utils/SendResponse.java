@@ -9,7 +9,7 @@ public class SendResponse<T> {
     
     
     
-    public SendResponse(int status, String message, T data){
+    public SendResponse(String status, String message, T data){
         this.status = status;
         this.message = message;
         this.data = data;

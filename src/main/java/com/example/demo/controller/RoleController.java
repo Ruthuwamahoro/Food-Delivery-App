@@ -28,7 +28,7 @@ public class RoleController {
         if(roles == null ){
             return  ResponseEntity.notFound().build();
         }
-        SendResponse<RoleModel> response = new SendResponse(200, "Role Created Successfully", null);
+        SendResponse<RoleModel> response = new SendResponse("success", "Role Created Successfully", null);
         return ResponseEntity.status(200).body(response);
     }
 
