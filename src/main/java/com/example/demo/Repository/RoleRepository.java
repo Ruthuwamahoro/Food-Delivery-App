@@ -7,6 +7,5 @@ import com.example.demo.model.RoleModel;
 
 @Repository
 public interface RoleRepository extends MongoRepository<RoleModel, String>{
-
     
 }
