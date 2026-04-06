@@ -34,6 +34,9 @@ public class UserModel {
     public String getEmail(){
         return email;
     }
+    public String getId(){
+        return id;
+    }
 
     public String setFullName(String fullName){
         return this.fullName = fullName;
