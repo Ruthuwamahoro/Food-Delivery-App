@@ -14,7 +14,7 @@ import com.example.demo.services.UserService;
 import com.example.demo.utils.SendResponse;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/hello")
 public class HelloController {
 
     private UserService userService;

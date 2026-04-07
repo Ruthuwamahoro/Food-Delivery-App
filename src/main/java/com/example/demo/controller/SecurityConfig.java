@@ -18,8 +18,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/users/*")
+                .requestMatchers("/api/users/**")
                 .authenticated()
+                .requestMatchers("/api/foods/**").permitAll()
+                .requestMatchers("/api/roles/**").permitAll()
                 .anyRequest().authenticated())
             .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
             .csrf(csrf -> csrf.disable());

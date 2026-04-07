@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -20,6 +21,9 @@ public class UserModel {
     public String id;
     public String fullName;
     public String email;
+    public String picture;
+    public LocalDateTime createdAt;
+    public LocalDateTime updatedAt;
 
     public void generateId(){
         if(this.id == null){
@@ -44,6 +48,13 @@ public class UserModel {
 
     public String setEmail(String email){
         return this.email = email;
+    }
+
+    public LocalDateTime setCreatedAt(){
+        return this.createdAt = LocalDateTime.now();
+    }
+    public LocalDateTime setUpdatedAt(){
+        return this.updatedAt = LocalDateTime.now();
     }
     @Override
     public String toString() {

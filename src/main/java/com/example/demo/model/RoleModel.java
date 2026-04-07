@@ -30,7 +30,7 @@ public class RoleModel {
     }
 
     public String setName(String Name){
-        return this.name= name;
+        return this.name= Name;
     }
 
     public String setDescription(String description){

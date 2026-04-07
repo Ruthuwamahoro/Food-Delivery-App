@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import com.example.demo.model.UserModel;
 
 @Service
 public class UserService {
-    private static  UserRepository userRepository;
+    private   UserRepository userRepository;
 
     @Autowired
     public UserService(UserRepository userRepository){
@@ -27,9 +28,13 @@ public class UserService {
         return saveUser;
     }
 
-    public static Optional<UserModel> getUserById(String id){
+    public  Optional<UserModel> getUserById(String id){
         Optional<UserModel> user = userRepository.findById(id);
         return user;
+    }
+    public  List<UserModel> getAllUsers(){
+        List<UserModel> users = userRepository.findAll();
+        return users;
     }
     
 }

@@ -23,10 +23,12 @@ public class RoleController {
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<SendResponse<RoleModel>> addRole(@RequestBody RoleModel role){
+    public ResponseEntity<SendResponse<RoleModel>> addRole(@RequestBody RoleModel role){        
+        
         RoleModel roles = roleService.CreateRole(role);
         if(roles == null ){
-            return  ResponseEntity.notFound().build();
+            SendResponse<RoleModel> response = new SendResponse<RoleModel>("error", "role already exists", null);
+            return  ResponseEntity.status(409).body(response);
         }
         SendResponse<RoleModel> response = new SendResponse("success", "Role Created Successfully", null);
         return ResponseEntity.status(200).body(response);

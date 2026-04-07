@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -26,15 +28,18 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException,ServletException{
         OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
-        String email = oauthUser.getAttribute("name");
+        String email = oauthUser.getAttribute("email");
         String fullName = oauthUser.getAttribute("name");
         String picture = oauthUser.getAttribute("picture");
         UserModel user = new UserModel();
         user.generateId();
         user.setFullName(fullName);
         user.setEmail(email);
+        user.setPicture(picture);
+        user.setCreatedAt();
+        user.setUpdatedAt();
         UserModel savedUser = userService.registerUser(user);
-        System.out.println("=========================================: " + savedUser.getId());
+        System.out.println("=========================================: " + oauthUser);
 
     }
 
