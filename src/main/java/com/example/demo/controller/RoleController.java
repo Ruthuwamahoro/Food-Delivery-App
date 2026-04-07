@@ -34,6 +34,4 @@ public class RoleController {
         return ResponseEntity.status(200).body(response);
     }
 
-
-    
 }
