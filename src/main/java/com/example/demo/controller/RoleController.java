@@ -41,7 +41,6 @@ public class RoleController {
         String token = authHeader.substring(7);
 
         boolean isAdmin = authService.isAdmin(token);
-        System.out.println("+++++++zzz+++++++++ " + isAdmin);
 
         if(!isAdmin){
             SendResponse<RoleModel> response = new SendResponse<>("error", "Unauthorized", null);

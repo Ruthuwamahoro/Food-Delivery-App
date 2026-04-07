@@ -5,10 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.model.RoleModel;
 import com.example.demo.model.UserModel;
+import com.example.demo.services.AuthService;
 import com.example.demo.services.UserService;
 import com.example.demo.utils.SendResponse;
 
@@ -19,9 +22,32 @@ public class UserController {
     @Autowired
     private  UserService userService;
 
+    @Autowired
+    private AuthService authService;
+
     @GetMapping
-    public  ResponseEntity<SendResponse<UserModel>> AllUsers(){
+    public  ResponseEntity<SendResponse<UserModel>> AllUsers(
+        @RequestHeader(value = "Authorization", required = true) String authHeader
+    ){
+
+        if(authHeader == null || !authHeader.startsWith("Bearer ")){
+            SendResponse<UserModel> response = new SendResponse<>("error", "Unauthorized", null);
+            return ResponseEntity.status(401).body(response);
+        }
+
+        String token = authHeader.substring(7);
+
+        boolean isAdmin = authService.isAdmin(token);
+
+        if(!isAdmin){
+            SendResponse<UserModel> response = new SendResponse<>("error", "Unauthorized", null);
+            return ResponseEntity.status(401).body(response);
+        }
+
+
         List<UserModel> users = userService.getAllUsers();
+        System.out.println("****************************");
+
         if(users == null){
             return ResponseEntity.notFound().build();
         } else {

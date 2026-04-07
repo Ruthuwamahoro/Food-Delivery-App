@@ -13,6 +13,7 @@ import com.example.demo.Repository.RoleRepository;
 import com.example.demo.model.UserModel;
 import com.example.demo.model.RoleModel;
 import com.example.demo.services.AuthService;
+import com.example.demo.services.CloudinaryService;
 import com.example.demo.services.UserService;
 
 import jakarta.servlet.ServletException;
@@ -31,6 +32,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private CloudinaryService cloudinaryService;    
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
@@ -41,12 +45,16 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
         UserModel user = userService.findByEmail(email);
     
         if (user == null) {
+            String cloudinaryPictureUrl = null;
+            if (picture != null) {
+                cloudinaryPictureUrl = cloudinaryService.uploadFromUrl(picture, "users/profiles");
+            }
             Optional<RoleModel> defaultRole = roleRepository.findByName("User");
             UserModel newUser = new UserModel();
             newUser.generateId();
             newUser.setFullName(fullName);
             newUser.setEmail(email);
-            newUser.setPicture(picture);
+            newUser.setPicture(cloudinaryPictureUrl); 
             newUser.setCreatedAt();
             newUser.setUpdatedAt();
             defaultRole.ifPresent(role -> newUser.setRoleId(role.getId()));
@@ -61,5 +69,4 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
         response.getWriter().flush();
     }
 
-    
 }
