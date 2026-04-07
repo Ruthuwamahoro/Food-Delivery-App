@@ -32,24 +32,33 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
     private AuthService authService;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException,ServletException{
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
         String email = oauthUser.getAttribute("email");
         String fullName = oauthUser.getAttribute("name");
         String picture = oauthUser.getAttribute("picture");
-        Optional<RoleModel> defaultRole = roleRepository.findByName("User");
-
-        UserModel user = new UserModel();
-        user.generateId();
-        user.setFullName(fullName);
-        user.setEmail(email);
-        user.setPicture(picture);
-        user.setCreatedAt();
-        user.setUpdatedAt();
-        defaultRole.ifPresent(role-> user.setRoleId(role.getId()));
-        UserModel savedUser = userService.registerUser(user);
-
-        String token = authService.generateJWT(user.getId(), user.getEmail(), user.getRoleId());        
+    
+        UserModel user = userService.findByEmail(email);
+    
+        if (user == null) {
+            Optional<RoleModel> defaultRole = roleRepository.findByName("User");
+            UserModel newUser = new UserModel();
+            newUser.generateId();
+            newUser.setFullName(fullName);
+            newUser.setEmail(email);
+            newUser.setPicture(picture);
+            newUser.setCreatedAt();
+            newUser.setUpdatedAt();
+            defaultRole.ifPresent(role -> newUser.setRoleId(role.getId()));
+            user = userService.registerUser(newUser); 
+        }
+    
+        String token = authService.generateJWT(user.getId(), user.getEmail(), user.getRoleId());
+    
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write("{\"token\": \"" + token + "\"}");
+        response.getWriter().flush();
     }
 
     

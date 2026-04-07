@@ -36,5 +36,9 @@ public class UserService {
         List<UserModel> users = userRepository.findAll();
         return users;
     }
+
+    public UserModel findByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
     
 }
