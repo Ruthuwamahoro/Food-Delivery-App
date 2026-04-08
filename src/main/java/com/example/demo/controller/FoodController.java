@@ -11,16 +11,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PatchMapping;
 
 import java.util.Optional;
 
+import com.cloudinary.Cloudinary;
+
 // import org.springframework.data.domain.Page;
 // import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.model.FoodModel;
+import com.example.demo.services.CloudinaryService;
 import com.example.demo.services.FoodService;
 import com.example.demo.utils.SendResponse;
 
@@ -30,6 +35,9 @@ public class FoodController {
 
     @Autowired
     private FoodService foodService;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
     
     @GetMapping
     public ResponseEntity<SendResponse<List<FoodModel>>> getAllFoods() {
@@ -70,16 +78,42 @@ public class FoodController {
 
 
     @PostMapping(
-        consumes = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<SendResponse<FoodModel>> addFood(@RequestBody FoodModel food){
-        FoodModel savedFood = foodService.addFood(food);
-        if(savedFood == null){
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<SendResponse<FoodModel>> addFood(
+        @RequestParam("name") String name,
+        @RequestParam("description") String description,
+        @RequestParam("price") Integer price,
+        @RequestParam("deliveryTime") String deliveryTime,
+        @RequestParam("images") List<MultipartFile> images
+    ){
+        try {
+
+            FoodModel food = new FoodModel();
+            food.generateId();
+            food.setName(name);
+            food.setDescription(description);
+            food.setPrice(price);
+            food.setDeliveryTime(deliveryTime);
+            if (images != null && !images.isEmpty()) {
+                List<String> uploadedUrls = cloudinaryService.uploadMultipleFiles(images, "foods");
+                food.setImages(uploadedUrls);
+            }
+    
+            FoodModel savedFood = foodService.addFood(food);
+            if (savedFood == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new SendResponse<>("error", "Failed to add food item", null));
+            }
+    
+            return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new SendResponse<>("success", "Food item added successfully", savedFood));
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(new SendResponse<>("error", "Image upload failed: " + e.getMessage(), null));
         }
-        SendResponse<FoodModel> response = new SendResponse<>("success", "Food item added successfully", null);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{id}")

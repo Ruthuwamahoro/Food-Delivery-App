@@ -1,20 +1,19 @@
 package com.example.demo.model;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import lombok.Setter;
 import lombok.ToString;
 
 
 @NoArgsConstructor
 @Document(collection = "foods")
-@Setter
-@Getter
+@Data
 @ToString
 
 public class FoodModel {
@@ -26,32 +25,16 @@ public class FoodModel {
 
     private String description;
 
-    private String price;
+    private Integer price;
+
+    private String deliveryTime;
+
+    private List<String> images;
 
     public void generateId(){
         if(this.id == null){
             this.id = UUID.randomUUID().toString();
         }
     
-    }
-
-    public String getDescription(){
-        return description;
-    }
-
-    public String getName(){
-        return name;
-    }
-    public String getPrice(){
-        return price;
-    }
-    public String setName(String name){
-        return this.name = name;
-    }
-    public String setDescription(String description){
-        return this.description = description;
-    }
-    public String setPrice(String price){
-        return this.price = price;
     }
 }

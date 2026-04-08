@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.RoleModel;
 import com.example.demo.model.UserModel;
 import com.example.demo.services.AuthService;
 import com.example.demo.services.UserService;
