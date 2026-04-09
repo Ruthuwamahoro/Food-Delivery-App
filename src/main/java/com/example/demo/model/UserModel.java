@@ -87,11 +87,11 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Document(collection = "users")
-@Data  // @Data already generates all getters/setters — remove duplicate @Getter @Setter @ToString
+@Data 
 public class UserModel {
 
     @Id
-    private String id;        // ← use private with @Data, not public
+    private String id;        
     private String fullName;
     private String email;
     private String picture;

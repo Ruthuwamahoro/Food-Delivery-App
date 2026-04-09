@@ -60,6 +60,15 @@ public class AuthService {
         return "69d4e084358c7a401073f8b3".equals(roleId);
     }
 
+    public String getToken(String authHeader){
+        if(authHeader == null || !authHeader.startsWith("Bearer ")){
+            return null;
+        }
+
+        String token = authHeader.substring(7);
+        return token;
+    }
+
     private Claims getClaims(String token){
         return Jwts.parserBuilder().setSigningKey(getSigninKey()).build().parseClaimsJws(token).getBody();
     }

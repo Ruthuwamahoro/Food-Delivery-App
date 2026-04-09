@@ -2,6 +2,7 @@ package com.example.demo.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,10 +32,22 @@ public class FoodModel {
 
     private List<String> images;
 
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
     public void generateId(){
         if(this.id == null){
             this.id = UUID.randomUUID().toString();
         }
     
+    };
+
+    public LocalDateTime setCreatedAt(){
+        return this.createdAt = LocalDateTime.now();
+    }
+
+    public LocalDateTime setUpdatedAt(){
+        return this.updatedAt = LocalDateTime.now();
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +26,8 @@ import com.cloudinary.Cloudinary;
 // import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.model.FoodModel;
+import com.example.demo.model.RoleModel;
+import com.example.demo.services.AuthService;
 import com.example.demo.services.CloudinaryService;
 import com.example.demo.services.FoodService;
 import com.example.demo.utils.SendResponse;
@@ -39,6 +42,9 @@ public class FoodController {
     @Autowired
     private CloudinaryService cloudinaryService;
     
+    @Autowired
+    private AuthService authService;
+
     @GetMapping
     public ResponseEntity<SendResponse<List<FoodModel>>> getAllFoods() {
         try {
@@ -86,16 +92,28 @@ public class FoodController {
         @RequestParam("description") String description,
         @RequestParam("price") Integer price,
         @RequestParam("deliveryTime") String deliveryTime,
-        @RequestParam("images") List<MultipartFile> images
+        @RequestParam("images") List<MultipartFile> images,
+        @RequestHeader(value="Authorization", required = true) String authHeader
     ){
         try {
-
+    
+            String token = authService.getToken(authHeader);
+    
+            boolean isAdmin = authService.isAdmin(token);
+    
+            if(!isAdmin){
+                SendResponse<FoodModel> response = new SendResponse<>("error", "Unauthorized", null);
+                return ResponseEntity.status(401).body(response);
+            }
+    
             FoodModel food = new FoodModel();
             food.generateId();
             food.setName(name);
             food.setDescription(description);
             food.setPrice(price);
             food.setDeliveryTime(deliveryTime);
+            food.setCreatedAt();
+            food.setUpdatedAt();
             if (images != null && !images.isEmpty()) {
                 List<String> uploadedUrls = cloudinaryService.uploadMultipleFiles(images, "foods");
                 food.setImages(uploadedUrls);
