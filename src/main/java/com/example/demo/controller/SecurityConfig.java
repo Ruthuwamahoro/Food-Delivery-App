@@ -22,9 +22,11 @@ public class SecurityConfig {
                 .permitAll()
                 .requestMatchers("/api/foods/**").permitAll()
                 .requestMatchers("/api/roles/**").permitAll()
+                .requestMatchers("/api/carts/**").permitAll()
                 .anyRequest().authenticated())
             .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
             .csrf(csrf -> csrf.disable());
+            // .cors(cors -> cors.disable());
         return http.build();
     }
     

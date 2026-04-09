@@ -72,4 +72,13 @@ public class AuthService {
     private Claims getClaims(String token){
         return Jwts.parserBuilder().setSigningKey(getSigninKey()).build().parseClaimsJws(token).getBody();
     }
+
+
+
+
+
+    public static String getUserById() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getUserById'");
+    }
 }

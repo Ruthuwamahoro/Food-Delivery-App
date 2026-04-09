@@ -26,5 +26,13 @@ public class CartModel {
             this.id = UUID.randomUUID().toString();
         }
     }
+
+    public LocalDateTime setCreatedAt(){
+        return this.createdAt = LocalDateTime.now();
+    }
+
+    public LocalDateTime setUpdatedAt(){
+        return this.updatedAt = LocalDateTime.now();
+    }
     
 }
