@@ -10,5 +10,5 @@ import com.example.demo.model.CartModel;
 
 @Repository
 public interface CartRepository extends MongoRepository<CartModel, String>{
-    
+    Optional<CartModel> findByUserId(String userId);
 }

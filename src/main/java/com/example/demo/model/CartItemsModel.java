@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
-@Document(collection = "CartItems")
+@Document(collection = "cartItems")
 @Data
 @ToString
 public class CartItemsModel {
@@ -19,6 +19,7 @@ public class CartItemsModel {
     @Id
     private String id;
     private String foodId;
+    private String cartId;
     private Integer quantity;
     private Integer price;
     private LocalDateTime createdAt;

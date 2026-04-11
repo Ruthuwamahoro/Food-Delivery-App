@@ -1,16 +1,15 @@
 package com.example.demo.services;
 
-import java.util.Optional;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Repository.CartItemsRepository;
 import com.example.demo.model.CartItemsModel;
-import com.example.demo.model.CartModel;
 
 @Service
 public class CartItemsService {
 
+    @Autowired
     private CartItemsRepository cartItemsRepository;
 
     public CartItemsService(CartItemsRepository cartItemsRepository){
