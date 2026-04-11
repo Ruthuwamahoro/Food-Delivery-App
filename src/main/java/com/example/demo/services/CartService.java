@@ -74,12 +74,10 @@ public class CartService {
             return dto;
         }).collect(Collectors.toList());
     
-        // Step 5: calculate total amount
         Integer totalAmount = itemDTOs.stream()
             .mapToInt(CartDTO.CartItemDTO::getTotalPrice)
             .sum();
     
-        // Step 6: build user DTO
         CartDTO.CartUserDTO userDTO = new CartDTO.CartUserDTO();
         if (user != null) {
             userDTO.setId(user.getId());
@@ -87,7 +85,6 @@ public class CartService {
             userDTO.setEmail(user.getEmail());
         }
     
-        // Step 7: build final DTO
         CartDTO cartDTO = new CartDTO();
         cartDTO.setCartId(cart.getId());
         cartDTO.setUser(userDTO);

@@ -1,5 +1,7 @@
 package com.example.demo.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,17 @@ public class CartItemsService {
     public CartItemsModel AddItemsToCart(CartItemsModel data){
         CartItemsModel addToCART = cartItemsRepository.save(data);
         return addToCART;
+    }
+
+    public boolean deleteItem(String id){
+      
+        if(!cartItemsRepository.findById(id).isPresent()){
+            return false;
+        }
+        System.out.println("++++" + id);
+        cartItemsRepository.deleteById(id);
+        return true;
+        
     }
     
 }

@@ -1,15 +1,20 @@
 package com.example.demo.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.Repository.CartItemsRepository;
 import com.example.demo.model.CartItemsModel;
 import com.example.demo.model.CartModel;
 import com.example.demo.services.AuthService;
@@ -29,6 +34,9 @@ public class CartItemController {
 
     @Autowired
     private CartService cartService;
+
+    @Autowired
+    private CartItemsRepository cartItemsRepository;
 
 
     @PostMapping(
@@ -76,6 +84,34 @@ public class CartItemController {
                 .body(new SendResponse<>("error", e.getMessage(), null));
         }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SendResponse<CartItemsModel>> deleteCartById(@PathVariable String id){
+        try {
+
+            Optional<CartItemsModel> findItemId = cartItemsRepository.findById(id);
+            if(findItemId == null){
+                SendResponse<CartItemsModel> response =new SendResponse<CartItemsModel>("error", "id not found", null);
+                return ResponseEntity.status(401).body(response);
+            }
+    
+            boolean info = cartItemsService.deleteItem(id);
+            if(!info){
+                SendResponse<CartItemsModel> response =new SendResponse<CartItemsModel>("error", "item not found", null);
+                return ResponseEntity.status(400).body(response); 
+            }
+            SendResponse<CartItemsModel> response =new SendResponse<CartItemsModel>("success", "item deleted successfully", null);
+            return ResponseEntity.status(200).body(response);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new SendResponse<>("error", e.getMessage(), null));
+        }
+
+
+    }
+
+    
 
 
 }
