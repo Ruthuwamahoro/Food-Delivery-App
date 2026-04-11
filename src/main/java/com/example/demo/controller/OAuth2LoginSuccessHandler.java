@@ -55,8 +55,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
             newUser.setFullName(fullName);
             newUser.setEmail(email);
             newUser.setPicture(cloudinaryPictureUrl); 
-            newUser.setCreatedAt();
-            newUser.setUpdatedAt();
+            newUser.initCreatedAt();
+            newUser.initUpdatedAt();
             defaultRole.ifPresent(role -> newUser.setRoleId(role.getId()));
             user = userService.registerUser(newUser); 
         }

@@ -43,11 +43,11 @@ public class FoodModel {
     
     };
 
-    public LocalDateTime setCreatedAt(){
+    public LocalDateTime initCreatedAt(){
         return this.createdAt = LocalDateTime.now();
     }
 
-    public LocalDateTime setUpdatedAt(){
+    public LocalDateTime initUpdatedAt(){
         return this.updatedAt = LocalDateTime.now();
     }
 }

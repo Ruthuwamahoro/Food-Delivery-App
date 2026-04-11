@@ -2,11 +2,16 @@ package com.example.demo.services;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import com.example.demo.Repository.UserRepository;
+import com.example.demo.model.UserModel;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,6 +25,9 @@ public class AuthService {
 
     @Value("${jwt.expiration}")
     private long expiration;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private Key getSigninKey(){
         byte[] keyBytes = secretKey.getBytes();
@@ -42,10 +50,50 @@ public class AuthService {
 
     }
 
-    public boolean isAuthenticated(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication != null && authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String);
+    // public boolean isAuthenticated(){
+    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    //     return authentication != null && authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String);
+    // }
 
+    public boolean isAuthenticated(String authHeader) {
+        try {
+            String token = getToken(authHeader);
+            if (token == null || token.isEmpty()) {
+                return false;
+            }
+
+    
+            // 2. Check if token is complete and valid (signature, structure)
+            Claims claims = getClaims(token);
+            if (claims == null) {
+                return false;
+            }
+
+
+    
+            // 3. Check if token is not expired
+            Date expiredAt = claims.getExpiration();
+            if (expiredAt == null || expiredAt.before(new Date())) {
+                return false;
+            }
+
+    
+            // 4. Check if user exists in database
+            String userId = claims.getSubject();
+
+           
+
+            Optional<UserModel> user = userRepository.findById(userId);
+
+            if (user == null) {
+                return false;
+            }
+    
+            return true;
+    
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public String getUserId(String token){

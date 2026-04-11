@@ -26,14 +26,12 @@ public class CartController {
     private AuthService authService;
 
     @PostMapping(
-        consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<SendResponse<CartModel>> CreateCart(
-        @RequestBody CartModel body,
         @RequestHeader(value = "Authorization", required = true) String authHeader
     ){
-        boolean isAuthenticated = authService.isAuthenticated();
+        boolean isAuthenticated = authService.isAuthenticated(authHeader);
         if(!isAuthenticated){  
             SendResponse<CartModel> response = new SendResponse<>("error", "Unauthorized", null);
             return ResponseEntity.status(401).body(response);
@@ -41,15 +39,15 @@ public class CartController {
     
         try {
             String token = authService.getToken(authHeader);
-            String userId = authService.getUserId(token);  
+            String userId = authService.getUserId(token);   
+            CartModel cart = new CartModel();
+            cart.generateId();
+            cart.setCreatedAt();
+            cart.setUpdatedAt();
+            cart.setUserId(userId);      
+            cartService.createAdd(cart);
     
-            body.generateId();           
-            body.setUserId(userId);      
-            body.setCreatedAt();
-            body.setUpdatedAt();         
-            cartService.createAdd(body);
-    
-            SendResponse<CartModel> response = new SendResponse<>("success", "Cart created successfully", body);
+            SendResponse<CartModel> response = new SendResponse<>("success", "Cart created successfully", null);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
             
         } catch (Exception e) {

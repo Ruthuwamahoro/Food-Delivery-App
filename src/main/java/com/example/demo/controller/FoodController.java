@@ -112,8 +112,8 @@ public class FoodController {
             food.setDescription(description);
             food.setPrice(price);
             food.setDeliveryTime(deliveryTime);
-            food.setCreatedAt();
-            food.setUpdatedAt();
+            food.initCreatedAt();
+            food.initUpdatedAt();
             if (images != null && !images.isEmpty()) {
                 List<String> uploadedUrls = cloudinaryService.uploadMultipleFiles(images, "foods");
                 food.setImages(uploadedUrls);

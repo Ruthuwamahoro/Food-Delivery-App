@@ -8,11 +8,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 
 @NoArgsConstructor
 @Document(collection="cart")
 @Data
+@ToString
 public class CartModel {
 
     @Id

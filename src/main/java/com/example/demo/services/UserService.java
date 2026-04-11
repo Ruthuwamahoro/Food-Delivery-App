@@ -40,5 +40,10 @@ public class UserService {
     public UserModel findByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
+
+    public UserModel findById(String userId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+    }
     
 }
