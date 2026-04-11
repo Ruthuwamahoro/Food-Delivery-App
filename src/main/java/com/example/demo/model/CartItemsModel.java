@@ -19,9 +19,8 @@ public class CartItemsModel {
     @Id
     private String id;
     private String foodId;
-    private String quantity;
+    private Integer quantity;
     private Integer price;
-    private Integer totalPrice;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
