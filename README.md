@@ -7,3 +7,18 @@ This App is designed to help users get easy support for ordering the food online
 ** Java SpringBoot
 ** MongoDb
 ** Cloudinary
+
+# API Endpoints
+
+- /api/users
+- /api/roles
+- /api/foods
+- /api/carts
+- /api/carts/items
+- /api/orders
+
+
+
+# Deployed Link
+
+- https://food-delivery-app-6jkg.onrender.com
