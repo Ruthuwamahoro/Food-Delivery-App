@@ -20,13 +20,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 
 import java.util.Optional;
 
-import com.cloudinary.Cloudinary;
-
-// import org.springframework.data.domain.Page;
-// import org.springframework.web.bind.annotation.RequestParam;
-
 import com.example.demo.model.FoodModel;
-import com.example.demo.model.RoleModel;
 import com.example.demo.services.AuthService;
 import com.example.demo.services.CloudinaryService;
 import com.example.demo.services.FoodService;

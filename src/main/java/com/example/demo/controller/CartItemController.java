@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -83,6 +84,32 @@ public class CartItemController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new SendResponse<>("error", e.getMessage(), null));
         }
+    }
+
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<SendResponse<CartItemsModel>> updateCartById(@PathVariable String id, @RequestBody CartItemsModel body){
+        Optional<CartItemsModel> findItemId = cartItemsRepository.findById(id);
+        if(!findItemId.isPresent()){ 
+            return ResponseEntity.status(404)
+                .body(new SendResponse<>("error", "id not found", null));
+        }
+
+        try {
+            CartItemsModel info = cartItemsService.updateItem(id, body);
+            if(info == null){
+                SendResponse<CartItemsModel> response =new SendResponse<CartItemsModel>("error", "failed to update", null);
+                return ResponseEntity.status(400).body(response); 
+            }
+            SendResponse<CartItemsModel> response =new SendResponse<CartItemsModel>("success", "item updated successfully", null);
+            return ResponseEntity.status(200).body(response);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new SendResponse<>("error", e.getMessage(), null));
+        }
+
+
     }
 
     @DeleteMapping("/{id}")

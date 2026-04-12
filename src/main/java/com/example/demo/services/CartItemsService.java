@@ -23,6 +23,25 @@ public class CartItemsService {
         return addToCART;
     }
 
+    public CartItemsModel updateItem(String id, CartItemsModel data) {
+
+        CartItemsModel existingItem = cartItemsRepository.findById(id).orElse(null);
+        if (existingItem == null) {
+            return null;
+        }
+    
+        if (data.getFoodId() != null) {
+            existingItem.setFoodId(data.getFoodId());
+        }
+        if (data.getQuantity() != null) {
+            existingItem.setQuantity(data.getQuantity());
+        }
+    
+        existingItem.setUpdatedAt();
+    
+        return cartItemsRepository.save(existingItem); // save existing, not new
+    }
+
     public boolean deleteItem(String id){
       
         if(!cartItemsRepository.findById(id).isPresent()){

@@ -23,6 +23,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/foods/**").permitAll()
                 .requestMatchers("/api/roles/**").permitAll()
                 .requestMatchers("/api/carts/**").permitAll()
+                .requestMatchers("/api/orders/**").permitAll()
+
                 .anyRequest().authenticated())
             .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
             .csrf(csrf -> csrf.disable());
