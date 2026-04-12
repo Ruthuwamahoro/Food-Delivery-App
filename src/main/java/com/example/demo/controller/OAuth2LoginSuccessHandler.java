@@ -1,9 +1,13 @@
 package com.example.demo.controller;
 
 import java.io.IOException;
+import org.springframework.http.HttpHeaders;   
+import java.time.Duration;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -33,7 +37,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
     private AuthService authService;
 
     @Autowired
-    private CloudinaryService cloudinaryService;    
+    private CloudinaryService cloudinaryService; 
+    
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -62,11 +69,21 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
         }
     
         String token = authService.generateJWT(user.getId(), user.getEmail(), user.getRoleId());
+
+        ResponseCookie cookie = ResponseCookie.from("auth-token", token)
+                                .httpOnly(true)
+                                .secure(true)
+                                .sameSite("None")
+                                .path("/")
+                                .maxAge(Duration.ofDays(7))
+                                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE,cookie.toString());
+        response.sendRedirect(frontendUrl + "/");
     
-        response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().write("{\"token\": \"" + token + "\"}");
-        response.getWriter().flush();
+        // response.setContentType("application/json");
+        // response.setStatus(HttpServletResponse.SC_OK);
+        // response.getWriter().write("{\"token\": \"" + token + "\"}");
+        // response.getWriter().flush();
     }
 
 }
