@@ -78,7 +78,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
                                 .maxAge(Duration.ofDays(7))
                                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE,cookie.toString());
-        response.sendRedirect(frontendUrl + "/?token="+ token);
+        response.sendRedirect(frontendUrl);
     
         // response.setContentType("application/json");
         // response.setStatus(HttpServletResponse.SC_OK);
