@@ -33,6 +33,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/roles/**").permitAll()
                 .requestMatchers("/api/carts/**").permitAll()
                 .requestMatchers("/api/orders/**").permitAll()
+                .requestMatchers("/api/auth/me/**").permitAll()
+                .requestMatchers("/api/auth/token/**").permitAll()
 
                 .anyRequest().authenticated())
             .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
