@@ -38,7 +38,10 @@ public class CartController {
     
         try {
             String token = authService.getToken(authHeader);
-            String userId = authService.getUserId(token);   
+            String userId = authService.getUserId(token); 
+            
+
+
     
             // get existing cart or create new one
             CartModel cart = cartService.getOrCreateCart(userId);

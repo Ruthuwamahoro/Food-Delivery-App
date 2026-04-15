@@ -48,6 +48,8 @@ public class CartItemController {
         @RequestBody CartItemsModel body, 
         @RequestHeader(value = "Authorization", required = true) String authHeader
     ){
+        System.out.println("===================");
+
         boolean isAuthenticated = authService.isAuthenticated(authHeader);
         if(!isAuthenticated){  
             return ResponseEntity.status(401)
@@ -64,6 +66,7 @@ public class CartItemController {
             String userId = authService.getUserId(token);
     
             CartModel cart = cartService.getOrCreateCart(userId); 
+
            
             
             CartItemsModel cartData = new CartItemsModel();
