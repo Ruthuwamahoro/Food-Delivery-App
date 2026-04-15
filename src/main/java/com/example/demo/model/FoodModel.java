@@ -9,6 +9,8 @@ import java.util.UUID;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.example.demo.interfaces.FoodCategory;
+
 import lombok.ToString;
 
 
@@ -29,6 +31,8 @@ public class FoodModel {
     private Integer price;
 
     private String deliveryTime;
+
+    private FoodCategory category;
 
     private List<String> images;
 

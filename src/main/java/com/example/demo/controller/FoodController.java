@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 
 import java.util.Optional;
 
+import com.example.demo.interfaces.FoodCategory;
 import com.example.demo.model.FoodModel;
 import com.example.demo.services.AuthService;
 import com.example.demo.services.CloudinaryService;
@@ -85,29 +86,39 @@ public class FoodController {
         @RequestParam("name") String name,
         @RequestParam("description") String description,
         @RequestParam("price") Integer price,
+        @RequestParam("category") String categoryStr,  
         @RequestParam("deliveryTime") String deliveryTime,
         @RequestParam("images") List<MultipartFile> images,
         @RequestHeader(value="Authorization", required = true) String authHeader
     ){
         try {
-    
             String token = authService.getToken(authHeader);
-    
             boolean isAdmin = authService.isAdmin(token);
     
             if(!isAdmin){
-                SendResponse<FoodModel> response = new SendResponse<>("error", "Unauthorized", null);
-                return ResponseEntity.status(401).body(response);
+                return ResponseEntity.status(401)
+                    .body(new SendResponse<>("error", "Unauthorized", null));
+            }
+    
+            // Convert String to FoodCategory enum
+            FoodCategory category;
+            try {
+                category = FoodCategory.valueOf(categoryStr.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new SendResponse<>("error", "Invalid category: " + categoryStr + ". Valid values: VEGETABLES, FRUITS, MEATS, SNACKS", null));
             }
     
             FoodModel food = new FoodModel();
             food.generateId();
             food.setName(name);
             food.setDescription(description);
+            food.setCategory(category);
             food.setPrice(price);
             food.setDeliveryTime(deliveryTime);
             food.initCreatedAt();
             food.initUpdatedAt();
+    
             if (images != null && !images.isEmpty()) {
                 List<String> uploadedUrls = cloudinaryService.uploadMultipleFiles(images, "foods");
                 food.setImages(uploadedUrls);
@@ -121,10 +132,10 @@ public class FoodController {
     
             return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new SendResponse<>("success", "Food item added successfully", savedFood));
-            
+    
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(new SendResponse<>("error", "Image upload failed: " + e.getMessage(), null));
+                .body(new SendResponse<>("error", "Image upload failed: " + e.getMessage(), null));
         }
     }
 
@@ -146,20 +157,72 @@ public class FoodController {
         }
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<SendResponse<FoodModel>> updateFood(@PathVariable String id, @RequestBody FoodModel food){
-        try{
-            FoodModel updatedFood = foodService.updateFood(id, food);
-            if(updatedFood == null){
-                SendResponse<FoodModel> responseData = new SendResponse<>("error", "Food item not found", null);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseData);
+    @PatchMapping(
+        value = "/{id}",
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<SendResponse<FoodModel>> updateFood(
+        @PathVariable String id,
+        @RequestParam(value = "name", required = false) String name,
+        @RequestParam(value = "description", required = false) String description,
+        @RequestParam(value = "price", required = false) Integer price,
+        @RequestParam(value = "category", required = false) String categoryStr,
+        @RequestParam(value = "deliveryTime", required = false) String deliveryTime,
+        @RequestParam(value = "images", required = false) List<MultipartFile> images,
+        @RequestHeader(value = "Authorization", required = true) String authHeader
+    ) {
+        try {
+            String token = authService.getToken(authHeader);
+            boolean isAdmin = authService.isAdmin(token);
+    
+            if (!isAdmin) {
+                return ResponseEntity.status(401)
+                    .body(new SendResponse<>("error", "Unauthorized", null));
             }
-            SendResponse<FoodModel> response = new SendResponse<>("success", "Food item updated successfully", null);
-            return ResponseEntity.ok(response);
-
-        } catch(Exception e){
-            SendResponse<FoodModel> response = new SendResponse<>("error", e.getMessage(), null);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    
+            // Fetch existing food
+            Optional<FoodModel> existingFood = foodService.getFoodById(id);
+            if (existingFood == null || existingFood.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new SendResponse<>("error", "Food item not found", null));
+            }
+    
+            FoodModel food = existingFood.get();
+    
+            // Only update fields that were sent
+            if (name != null) food.setName(name);
+            if (description != null) food.setDescription(description);
+            if (price != null) food.setPrice(price);
+            if (deliveryTime != null) food.setDeliveryTime(deliveryTime);
+    
+            if (categoryStr != null) {
+                try {
+                    food.setCategory(FoodCategory.valueOf(categoryStr.toUpperCase()));
+                } catch (IllegalArgumentException e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new SendResponse<>("error", "Invalid category: " + categoryStr + ". Valid values: VEGETABLES, FRUITS, MEATS, SNACKS", null));
+                }
+            }
+    
+            if (images != null && !images.isEmpty()) {
+                List<String> uploadedUrls = cloudinaryService.uploadMultipleFiles(images, "foods");
+                food.setImages(uploadedUrls);
+            }
+    
+            food.initUpdatedAt();
+    
+            FoodModel updatedFood = foodService.updateFood(id, food);
+            if (updatedFood == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new SendResponse<>("error", "Food item not found", null));
+            }
+    
+            return ResponseEntity.ok(new SendResponse<>("success", "Food item updated successfully", updatedFood));
+    
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new SendResponse<>("error", e.getMessage(), null));
         }
     }
     
