@@ -67,6 +67,12 @@ public class CartItemController {
     
             CartModel cart = cartService.getOrCreateCart(userId); 
 
+            Optional<CartItemsModel> existingItem = cartItemsRepository
+            .findByCartIdAndFoodId(cart.getId(), body.getFoodId());
+            if(existingItem.isPresent()){
+                return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new SendResponse<>("error", "Items already exists", null));
+            }
            
             
             CartItemsModel cartData = new CartItemsModel();

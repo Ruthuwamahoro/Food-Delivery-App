@@ -12,4 +12,5 @@ import com.example.demo.model.CartItemsModel;
 public interface CartItemsRepository extends MongoRepository<CartItemsModel, String> {
     List<CartItemsModel> findByCartId(String cartId);
     Optional<CartItemsModel> findById(String id);
+    Optional<CartItemsModel> findByCartIdAndFoodId(String id, String foodId);
 }
