@@ -13,6 +13,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -23,34 +25,48 @@ public class SecurityConfig {
     @Value("${frontend.url}")
     private String frontendUrl;
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/users/**")
-                .permitAll()
+                .requestMatchers("/api/users/**").permitAll()
                 .requestMatchers("/api/foods/**").permitAll()
                 .requestMatchers("/api/roles/**").permitAll()
                 .requestMatchers("/api/carts/**").permitAll()
                 .requestMatchers("/api/orders/**").permitAll()
                 .requestMatchers("/api/auth/me/**").permitAll()
                 .requestMatchers("/api/auth/token/**").permitAll()
-
-                .anyRequest().authenticated())
+                .anyRequest().authenticated()
+            )
             .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable());
+            .csrf(csrf -> csrf.disable())
+    
+            // ✅ Stop redirecting to Google — return 401 instead
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\": \"Unauthorized\"}");
+                })
+            );
+    
         return http.build();
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource(){
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowedOrigins(List.of(frontendUrl));
-        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+    
+        // ✅ Set origins once, combining both
+        config.setAllowedOrigins(List.of("http://localhost:3000", frontendUrl));
+        
+        // ✅ Add PATCH to the list
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
+    
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;

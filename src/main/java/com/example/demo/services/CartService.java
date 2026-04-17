@@ -60,6 +60,7 @@ public class CartService {
             FoodModel food = mongoTemplate.findById(item.getFoodId(), FoodModel.class);
     
             CartDTO.CartItemDTO dto = new CartDTO.CartItemDTO();
+            dto.setCartItemId(item.getId());
             dto.setFoodId(item.getFoodId());
             dto.setQuantity(item.getQuantity());
             dto.setFoodPrice(item.getPrice());

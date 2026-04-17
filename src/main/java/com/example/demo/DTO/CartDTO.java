@@ -19,6 +19,7 @@ public class CartDTO {
 
     @Data
     public static class CartItemDTO {
+        private String cartItemId;
         private String foodId;
         private String foodName;
         private String foodPicture;

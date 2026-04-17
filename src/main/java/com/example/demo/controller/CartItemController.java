@@ -1,11 +1,13 @@
 package com.example.demo.controller;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -95,30 +97,48 @@ public class CartItemController {
         }
     }
 
-
     @PatchMapping("/{id}")
-    public ResponseEntity<SendResponse<CartItemsModel>> updateCartById(@PathVariable String id, @RequestBody CartItemsModel body){
+    public ResponseEntity<SendResponse<CartItemsModel>> updateCartById(
+        @RequestHeader(value = "Authorization", required = true) String authHeader,
+        @PathVariable String id,
+        @RequestBody Map<String, Object> body) {
+
+        boolean isAuthenticated = authService.isAuthenticated(authHeader);
+        if (!isAuthenticated) {
+            return ResponseEntity.status(401)
+                .body(new SendResponse<>("error", "Unauthorized", null));
+        }
+
         Optional<CartItemsModel> findItemId = cartItemsRepository.findById(id);
-        if(!findItemId.isPresent()){ 
+        if (!findItemId.isPresent()) {
             return ResponseEntity.status(404)
                 .body(new SendResponse<>("error", "id not found", null));
         }
 
         try {
-            CartItemsModel info = cartItemsService.updateItem(id, body);
-            if(info == null){
-                SendResponse<CartItemsModel> response =new SendResponse<CartItemsModel>("error", "failed to update", null);
-                return ResponseEntity.status(400).body(response); 
+            CartItemsModel item = findItemId.get();
+
+            // ✅ Only update fields that are present in the request body
+            if (body.containsKey("quantity")) {
+                item.setQuantity((Integer) body.get("quantity"));
             }
-            SendResponse<CartItemsModel> response =new SendResponse<CartItemsModel>("success", "item updated successfully", null);
-            return ResponseEntity.status(200).body(response);
-            
+            if (body.containsKey("price")) {
+                item.setPrice((Integer) body.get("price"));
+            }
+            if (body.containsKey("foodId")) {
+                item.setFoodId((String) body.get("foodId"));
+            }
+            // add more fields as needed...
+
+            CartItemsModel updated = cartItemsRepository.save(item);
+
+            return ResponseEntity.status(200)
+                .body(new SendResponse<>("success", "item updated successfully", updated));
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(500)
                 .body(new SendResponse<>("error", e.getMessage(), null));
         }
-
-
     }
 
     @DeleteMapping("/{id}")
