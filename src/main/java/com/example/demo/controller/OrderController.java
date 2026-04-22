@@ -58,7 +58,7 @@ public class OrderController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<SendResponse<List<OrderModel>>> getMyOrders(@RequestBody OrderModel body, @RequestHeader(value="Authorization", required = true) String authHeader){
+    public ResponseEntity<SendResponse<List<OrderModel>>> getMyOrders(@RequestHeader(value="Authorization", required = true) String authHeader){
         boolean isAuthenticated = authService.isAuthenticated(authHeader);
         if (!isAuthenticated) {
             return ResponseEntity.status(401)
