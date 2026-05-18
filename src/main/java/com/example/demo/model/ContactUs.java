@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
-@Document(collection = "contact");
+@Document(collection = "contact")
 @Data
 @ToString
 public class ContactUs{
-    @Id;
+    @Id
     private String id;
     private String name;
     private String email;
